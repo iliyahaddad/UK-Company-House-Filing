@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reports - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a><a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a><a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports" aria-current="page">Reports</a>
+    <a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main class="wide">
+  <h1>Financial reports</h1>
+  <div class="panel">
+    <div class="row"><div class="field"><label for="period-select">Fiscal period</label><select id="period-select"><option value="">All dates (no period filter)</option></select></div></div>
+  </div>
+
+  <div class="panel"><h2>Trial balance</h2><div id="tb-notice"></div>
+    <table id="tb-table"><tr><th>Code</th><th>Name</th><th>Type</th><th class="num">Debit</th><th class="num">Credit</th></tr></table>
+  </div>
+  <div class="panel"><h2>Profit and loss</h2><div id="pl-notice"></div>
+    <table id="pl-table"></table>
+  </div>
+  <div class="panel"><h2>Statement of financial position</h2><div id="bs-notice"></div>
+    <table id="bs-table"></table>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+const PL_LABELS = [["revenue","Turnover"],["cost_of_sales","Cost of sales"],["gross_profit","Gross profit"],
+  ["operating_expenses","Operating expenses"],["operating_profit","Operating profit"],["tax","Tax"],["net_profit","Profit for the period"]];
+const BS_LABELS = [["fixed_assets","Fixed assets"],["current_assets","Current assets"],["total_assets","Total assets"],
+  ["creditors","Creditors (within one year)"],["long_term_liabilities","Creditors (after one year)"],
+  ["total_liabilities","Total liabilities"],["share_capital","Called up share capital"],
+  ["retained_earnings","Profit and loss account"],["total_equity","Total equity"],["net_assets","Net assets"]];
+
+function periodId() { return document.getElementById("period-select").value; }
+function qs() { return periodId() ? `?period_id=${periodId()}` : ""; }
+
+async function loadPeriods() {
+  const data = await apiCall(`/api/companies/${companyId}/periods`);
+  const select = document.getElementById("period-select");
+  let current = null;
+  for (const p of data.periods) {
+    select.appendChild(el("option", {value:p.id, text:`${p.name} (${p.start_date} to ${p.end_date})`}));
+    if (p.is_current) current = p.id;
+  }
+  if (current) select.value = current;
+  select.addEventListener("change", loadAll);
+}
+
+async function loadTrialBalance() {
+  const notice = document.getElementById("tb-notice");
+  try {
+    const data = await apiCall(`/api/companies/${companyId}/reports/trial-balance${qs()}`);
+    const table = document.getElementById("tb-table");
+    table.innerHTML = "<tr><th>Code</th><th>Name</th><th>Type</th><th class=\"num\">Debit</th><th class=\"num\">Credit</th></tr>";
+    for (const r of data.rows) {
+      table.appendChild(el("tr", {}, [el("td", {class:"mono", text:r.code}), el("td", {text:r.name}), el("td", {text:r.type}),
+        el("td", {class:"num", text: r.debit != 0 ? money(r.debit) : ""}), el("td", {class:"num", text: r.credit != 0 ? money(r.credit) : ""})]));
+    }
+    table.appendChild(el("tr", {class:"total"}, [el("td",{},[]), el("td",{},[]), el("td",{text:"Total"}),
+      el("td", {class:"num", text: money(data.total_debit)}), el("td", {class:"num", text: money(data.total_credit)})]));
+    if (!data.balanced) showNotice(notice, "error", "Trial balance does not balance.");
+    else notice.innerHTML = "";
+  } catch (err) { showErrors(notice, err); }
+}
+
+function reportTable(id, labels, report, notice) {
+  const table = document.getElementById(id);
+  table.innerHTML = "";
+  for (const [key, label] of labels) {
+    if (!(key in report)) continue;
+    const isTotal = ["operating_profit","net_profit","total_assets","total_liabilities","total_equity","net_assets"].includes(key);
+    table.appendChild(el("tr", {class: isTotal ? "total" : ""}, [el("td", {text: label}), el("td", {class:"num", text: money(report[key])})]));
+  }
+}
+async function loadProfitLoss() {
+  const notice = document.getElementById("pl-notice");
+  try { reportTable("pl-table", PL_LABELS, (await apiCall(`/api/companies/${companyId}/reports/profit-loss${qs()}`)).report, notice); notice.innerHTML=""; }
+  catch (err) { showErrors(notice, err); }
+}
+async function loadBalanceSheet() {
+  const notice = document.getElementById("bs-notice");
+  try { reportTable("bs-table", BS_LABELS, (await apiCall(`/api/companies/${companyId}/reports/balance-sheet${qs()}`)).report, notice); notice.innerHTML=""; }
+  catch (err) { showErrors(notice, err); }
+}
+async function loadAll() { await Promise.all([loadTrialBalance(), loadProfitLoss(), loadBalanceSheet()]); }
+
+(async () => { await loadPeriods(); await loadAll(); })();
+</script>
+</body>
+</html>

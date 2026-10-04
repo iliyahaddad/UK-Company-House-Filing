@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Journal - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a><a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a>
+    <a href="/companies/{{ company.id }}/journal" aria-current="page">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a>
+    <a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main class="wide">
+  <h1>Journal entries</h1>
+  <div class="panel">
+    <h2>New entry</h2>
+    <div id="entry-notice"></div>
+    <form id="entry-form">
+      <div class="row">
+        <div class="field"><label for="e-date">Date</label><input id="e-date" type="date" required></div>
+        <div class="field"><label for="e-desc">Description</label><input id="e-desc" required></div>
+        <div class="field"><label for="e-ref">Reference</label><input id="e-ref"></div>
+        <div class="field"><label for="e-period">Fiscal period</label><select id="e-period"><option value="">Auto (by date)</option></select></div>
+      </div>
+      <div id="lines"></div>
+      <button type="button" class="secondary" id="add-line">Add line</button>
+      <div style="margin-top:14px"><span id="balance-check" class="muted mono"></span></div>
+      <button type="submit" style="margin-top:10px">Save entry</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h2>Recent entries</h2>
+    <table id="entries-table"><tr><th>Date</th><th>Description</th><th>Reference</th><th>Lines</th></tr></table>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+let accounts = [];
+
+function accountSelect() {
+  const select = el("select", {class:"account-select"}, []);
+  for (const a of accounts) select.appendChild(el("option", {value:a.id, text:`${a.code} ${a.name}`}));
+  return select;
+}
+function addLine() {
+  const row = el("div", {class:"journal-line"}, [
+    accountSelect(),
+    el("input", {class:"debit", type:"number", step:"0.01", placeholder:"Debit", value:"0"}),
+    el("input", {class:"credit", type:"number", step:"0.01", placeholder:"Credit", value:"0"}),
+    el("input", {class:"desc", placeholder:"Line description"}),
+    el("button", {type:"button", class:"remove-line", text:"Remove", onclick:(e)=>{e.target.closest(".journal-line").remove(); updateBalance();}}),
+  ]);
+  row.querySelectorAll(".debit,.credit").forEach((i) => i.addEventListener("input", updateBalance));
+  document.getElementById("lines").appendChild(row);
+  updateBalance();
+}
+document.getElementById("add-line").addEventListener("click", addLine);
+
+function updateBalance() {
+  let debit = 0, credit = 0;
+  document.querySelectorAll(".journal-line").forEach((row) => {
+    debit += Number(row.querySelector(".debit").value || 0);
+    credit += Number(row.querySelector(".credit").value || 0);
+  });
+  const span = document.getElementById("balance-check");
+  const diff = Math.round((debit - credit) * 100) / 100;
+  span.textContent = `Debit ${money(debit)}  Credit ${money(credit)}  ${diff === 0 ? "Balanced" : "Difference " + money(diff)}`;
+  span.style.color = diff === 0 ? "var(--green)" : "var(--red)";
+}
+
+async function loadAccounts() {
+  const data = await apiCall(`/api/companies/${companyId}/accounts`);
+  accounts = data.accounts;
+  document.getElementById("lines").innerHTML = "";
+  addLine(); addLine();
+}
+async function loadPeriods() {
+  const data = await apiCall(`/api/companies/${companyId}/periods`);
+  const select = document.getElementById("e-period");
+  for (const p of data.periods) select.appendChild(el("option", {value:p.id, text:`${p.name} (${p.start_date} to ${p.end_date})`}));
+}
+async function loadEntries() {
+  const data = await apiCall(`/api/companies/${companyId}/journal`);
+  const table = document.getElementById("entries-table");
+  table.innerHTML = "<tr><th>Date</th><th>Description</th><th>Reference</th><th>Lines</th></tr>";
+  if (!data.entries.length) { table.appendChild(el("tr", {}, [el("td", {colspan:"4", class:"empty"}, ["No entries yet."])])); return; }
+  for (const entry of data.entries) {
+    table.appendChild(el("tr", {}, [el("td", {text:entry.date}), el("td", {text:entry.description}),
+      el("td", {text:entry.reference || ""}), el("td", {text:`${entry.lines.length} lines`})]));
+  }
+}
+
+document.getElementById("entry-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const notice = document.getElementById("entry-notice");
+  const lines = [...document.querySelectorAll(".journal-line")].map((row) => ({
+    account_id: Number(row.querySelector(".account-select").value),
+    debit: row.querySelector(".debit").value || "0",
+    credit: row.querySelector(".credit").value || "0",
+    description: row.querySelector(".desc").value || null,
+  }));
+  try {
+    await apiCall(`/api/companies/${companyId}/journal`, {method:"POST", body: JSON.stringify({
+      date: document.getElementById("e-date").value,
+      description: document.getElementById("e-desc").value,
+      reference: document.getElementById("e-ref").value,
+      fiscal_period_id: document.getElementById("e-period").value ? Number(document.getElementById("e-period").value) : null,
+      lines,
+    })});
+    showNotice(notice, "ok", "Entry saved.");
+    e.target.reset();
+    await loadAccounts(); await loadEntries();
+  } catch (err) { showErrors(notice, err); }
+});
+
+(async () => { await loadAccounts(); await loadPeriods(); await loadEntries(); })();
+</script>
+</body>
+</html>

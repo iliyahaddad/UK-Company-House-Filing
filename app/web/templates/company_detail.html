@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ company.name }} - UK Accounts</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a>
+    <a href="/companies/{{ company.id }}" aria-current="page">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a>
+    <a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a>
+    <a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main>
+  <h1>{{ company.name }}</h1>
+  <p class="subtitle mono">Company {{ company.company_number }} &middot; {{ company.company_type }}</p>
+  <div class="panel">
+    <table>
+      <tr><td class="muted">Registered office</td><td>{{ company.registered_address or "Not set" }}</td></tr>
+      <tr><td class="muted">SIC code</td><td>{{ company.sic_code or "Not set" }}</td></tr>
+      <tr><td class="muted">Incorporated</td><td>{{ company.incorporation_date or "Not set" }}</td></tr>
+      <tr><td class="muted">Directors</td><td>{{ company.directors or "Not set" }}</td></tr>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Next step</h2>
+    <p>Set up the chart of accounts and a fiscal period, then record journal entries.</p>
+    <a href="/companies/{{ company.id }}/setup"><button>Company setup</button></a>
+  </div>
+</main>
+</body>
+</html>

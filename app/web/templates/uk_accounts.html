@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UK Accounts - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a><a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a><a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a>
+    <a href="/companies/{{ company.id }}/uk-accounts" aria-current="page">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main class="wide">
+  <h1>Generate UK accounts (iXBRL)</h1>
+  <p class="subtitle">Requires accounts details to be saved on the Setup page for the chosen period first.</p>
+  <div class="panel">
+    <div class="row">
+      <div class="field"><label for="period-select">Fiscal period</label><select id="period-select"></select></div>
+      <div class="field"><label for="type-select">Account type</label>
+        <select id="type-select"><option value="micro">Micro-entity</option><option value="small">Small company</option><option value="dormant">Dormant</option></select>
+      </div>
+    </div>
+    <div id="generate-notice"></div>
+    <button id="generate-btn">Generate</button>
+  </div>
+
+  <div class="panel">
+    <h2>Generated files</h2>
+    <table id="files-table"><tr><th>Created</th><th>Type</th><th>Reconciliation</th><th>Validation</th><th></th></tr></table>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+async function loadPeriods() {
+  const data = await apiCall(`/api/companies/${companyId}/periods`);
+  const select = document.getElementById("period-select");
+  let current = null;
+  for (const p of data.periods) {
+    select.appendChild(el("option", {value:p.id, text:`${p.name} (${p.end_date})`}));
+    if (p.is_current) current = p.id;
+  }
+  if (current) select.value = current;
+}
+function reconBadge(f) {
+  if (f.reconciliation_ok) return el("span", {class:"badge badge-ok", text:"Matches ledger"});
+  return el("span", {class:"badge badge-error", text:"Does not match ledger"});
+}
+function validationBadge(f) {
+  if (f.validation_valid === null || f.validation_valid === undefined) return el("span", {class:"badge badge-neutral", text:"Not validated"});
+  if (!f.validated_current) return el("span", {class:"badge badge-warn", text:"Stale validation"});
+  return f.validation_valid ? el("span", {class:"badge badge-ok", text:"Valid"}) : el("span", {class:"badge badge-error", text:"Invalid"});
+}
+async function loadFiles() {
+  const data = await apiCall(`/api/companies/${companyId}/files`);
+  const table = document.getElementById("files-table");
+  table.innerHTML = "<tr><th>Created</th><th>Type</th><th>Reconciliation</th><th>Validation</th><th></th></tr>";
+  if (!data.files.length) { table.appendChild(el("tr", {}, [el("td", {colspan:"5", class:"empty"}, ["No files generated yet."])])); return; }
+  for (const f of data.files) {
+    const link = el("a", {href:`/companies/${companyId}/validation`, text:"Validate / file"});
+    table.appendChild(el("tr", {}, [el("td", {text:f.created_at}), el("td", {text:f.account_type}),
+      el("td", {}, [reconBadge(f)]), el("td", {}, [validationBadge(f)]), el("td", {}, [link])]));
+    if (f.warnings && f.warnings.length) {
+      const warn = el("div", {class:"notice notice-warn", style:"margin:4px 0 10px"}, []);
+      warn.appendChild(el("ul", {}, f.warnings.map((w) => el("li", {text:w}))));
+      table.appendChild(el("tr", {}, [el("td", {colspan:"5"}, [warn])]));
+    }
+  }
+}
+document.getElementById("generate-btn").addEventListener("click", async () => {
+  const notice = document.getElementById("generate-notice");
+  const period = document.getElementById("period-select").value;
+  if (!period) { showNotice(notice, "error", "Add a fiscal period first."); return; }
+  try {
+    const data = await apiCall(`/api/companies/${companyId}/uk-accounts/generate`, {method:"POST", body: JSON.stringify({
+      period_id: Number(period), account_type: document.getElementById("type-select").value,
+    })});
+    showNotice(notice, data.file.reconciliation_ok ? "ok" : "warn",
+      data.file.reconciliation_ok ? "Generated. Totals match the ledger." : "Generated, but totals do not match the ledger - check account categories on the Setup page.");
+    await loadFiles();
+  } catch (err) { showErrors(notice, err); }
+});
+(async () => { await loadPeriods(); await loadFiles(); })();
+</script>
+</body>
+</html>

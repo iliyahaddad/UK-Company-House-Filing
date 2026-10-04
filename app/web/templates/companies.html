@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Companies - UK Accounts</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav><a href="/companies" aria-current="page">Companies</a></nav>
+</header>
+<main>
+  <h1>Companies</h1>
+  <p class="subtitle">Each company keeps its own ledger, accounts and filing credentials.</p>
+
+  <div class="panel">
+    <h2>Add a company</h2>
+    <div id="form-notice"></div>
+    <form id="company-form">
+      <div class="row">
+        <div class="field"><label for="name">Company name</label><input id="name" required></div>
+        <div class="field"><label for="number">Company number</label><input id="number" placeholder="12345678" required></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="type">Registered in</label>
+          <select id="type"><option value="EW">England and Wales</option><option value="SC">Scotland</option><option value="NI">Northern Ireland</option></select>
+        </div>
+        <div class="field"><label for="incorporated">Incorporation date</label><input id="incorporated" type="date" required></div>
+        <div class="field"><label for="sic">SIC code</label><input id="sic" placeholder="62020"></div>
+      </div>
+      <div class="field"><label for="address">Registered office address</label><input id="address"></div>
+      <div class="field"><label for="directors">Directors (comma-separated)</label><input id="directors" placeholder="Jane Smith, Amir Khan" required></div>
+      <button type="submit">Add company</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Existing companies</h2>
+    {% if companies %}
+    <table>
+      <tr><th>Name</th><th>Number</th><th>Registered in</th></tr>
+      {% for c in companies %}
+      <tr><td><a href="/companies/{{ c.id }}">{{ c.name }}</a></td><td class="mono">{{ c.company_number }}</td><td>{{ c.company_type }}</td></tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p class="empty">No companies yet. Add one above.</p>
+    {% endif %}
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+document.getElementById("company-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const notice = document.getElementById("form-notice");
+  try {
+    const data = await apiCall("/api/companies", { method: "POST", body: JSON.stringify({
+      name: document.getElementById("name").value,
+      company_number: document.getElementById("number").value,
+      company_type: document.getElementById("type").value,
+      incorporation_date: document.getElementById("incorporated").value,
+      sic_code: document.getElementById("sic").value || null,
+      registered_address: document.getElementById("address").value || null,
+      directors: document.getElementById("directors").value,
+    })});
+    window.location.href = `/companies/${data.id}`;
+  } catch (err) { showErrors(notice, err); }
+});
+</script>
+</body>
+</html>

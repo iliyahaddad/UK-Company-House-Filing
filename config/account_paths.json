@@ -1,0 +1,16 @@
+{
+  "_comment": "Full account name prefix used in the CSV handed to ixbrl-reporter, per account category. The names must match what the ixbrl-reporter-jsonnet templates look for. Edit here, not in code.",
+  "fixed_asset": "Assets:Fixed Assets",
+  "current_asset": "Assets:Current Assets",
+  "cash": "Assets:Current Assets:Cash at bank and in hand",
+  "debtor": "Assets:Current Assets:Debtors",
+  "creditor": "Liabilities:Current Liabilities:Creditors",
+  "current_liability": "Liabilities:Current Liabilities",
+  "long_term_liability": "Liabilities:Long Term Liabilities",
+  "share_capital": "Equity:Share Capital",
+  "retained_earnings": "Equity:Retained Earnings",
+  "revenue": "Income",
+  "cost_of_sales": "Expenses:Cost of Sales",
+  "expense": "Expenses:Overheads",
+  "tax": "Expenses:Tax"
+}

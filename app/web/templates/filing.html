@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Filing - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a><a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a><a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a><a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing" aria-current="page">Filing</a>
+  </nav>
+</header>
+<main class="wide">
+  <h1>File with Companies House</h1>
+  {% if not live_enabled %}
+  <div class="notice notice-warn">Live filing is switched off on this server (ALLOW_LIVE_FILING is not set). Test-mode submissions still work.</div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Filing credentials</h2>
+    {% if credentials %}
+    <p>Presenter <span class="mono">{{ credentials.presenter_id }}</span> &middot;
+      {{ "Test mode" if credentials.test_mode else "Live mode" }} &middot;
+      <span class="mono">{{ credentials.gateway_url }}</span></p>
+    {% else %}
+    <p class="empty">Not configured yet.</p>
+    {% endif %}
+    <div id="cred-notice"></div>
+    <form id="cred-form">
+      <div class="row">
+        <div class="field"><label for="presenter">Presenter ID</label><input id="presenter" required></div>
+        <div class="field"><label for="auth">Authentication</label><input id="auth" type="password" required></div>
+        <div class="field"><label for="auth-code">Company authentication code</label><input id="auth-code" type="password" required></div>
+      </div>
+      <div class="checkbox-field"><input type="checkbox" id="test-mode" checked><label for="test-mode">Test mode (does not create a real filing)</label></div>
+      <button type="submit">Save credentials</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Submit</h2>
+    <div class="field"><label for="file-select">Generated file</label><select id="file-select"></select></div>
+    <div class="checkbox-field"><input type="checkbox" id="confirm-approval"><label for="confirm-approval">The directors have approved these accounts for filing</label></div>
+    <div id="submit-notice"></div>
+    <button id="submit-btn">Submit</button>
+  </div>
+
+  <div class="panel">
+    <h2>Submissions</h2>
+    <table id="submissions-table"><tr><th>Date</th><th>Status</th><th>Submission ID</th><th></th></tr></table>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+document.getElementById("cred-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const notice = document.getElementById("cred-notice");
+  try {
+    await apiCall(`/api/companies/${companyId}/filing/credentials`, {method:"POST", body: JSON.stringify({
+      presenter_id: document.getElementById("presenter").value,
+      authentication: document.getElementById("auth").value,
+      company_auth_code: document.getElementById("auth-code").value,
+      test_mode: document.getElementById("test-mode").checked,
+    })});
+    showNotice(notice, "ok", "Saved. Reload to see the presenter ID.");
+    e.target.reset();
+  } catch (err) { showErrors(notice, err); }
+});
+
+async function loadFiles() {
+  const data = await apiCall(`/api/companies/${companyId}/files`);
+  const select = document.getElementById("file-select");
+  select.innerHTML = "";
+  for (const f of data.files) {
+    const label = `${f.created_at} - ${f.account_type}` + (f.reconciliation_ok ? "" : " (does not match ledger)")
+      + (f.validated_current && f.validation_valid ? " - Arelle valid" : " - not validated or stale");
+    select.appendChild(el("option", {value:f.id, text:label}));
+  }
+}
+async function loadSubmissions() {
+  const data = await apiCall(`/api/companies/${companyId}/filing/submissions`);
+  const table = document.getElementById("submissions-table");
+  table.innerHTML = "<tr><th>Date</th><th>Status</th><th>Submission ID</th><th></th></tr>";
+  if (!data.submissions.length) { table.appendChild(el("tr", {}, [el("td", {colspan:"4", class:"empty"}, ["No submissions yet."])])); return; }
+  for (const s of data.submissions) {
+    const actions = el("div", {}, []);
+    if (s.status !== "PENDING" && !s.submission_id.startsWith("PENDING-")) {
+      actions.appendChild(el("button", {class:"secondary", type:"button", text:"Check status",
+        onclick: async () => { try { await apiCall(`/api/companies/${companyId}/filing/submissions/${s.id}/status`, {method:"POST"}); await loadSubmissions(); } catch (err) { alert(err.message); } }}));
+    }
+    if (["PENDING","UNCERTAIN"].includes(s.status)) {
+      actions.appendChild(el("button", {class:"danger", type:"button", style:"margin-left:6px", text:"Mark released",
+        onclick: async () => {
+          if (!confirm("Only do this once you have checked with Companies House that this was not received. Continue?")) return;
+          try { await apiCall(`/api/companies/${companyId}/filing/submissions/${s.id}/release`, {method:"POST", body: JSON.stringify({confirm:true})}); await loadSubmissions(); }
+          catch (err) { alert(err.message); }
+        }}));
+    }
+    table.appendChild(el("tr", {}, [el("td", {text:s.date}), el("td", {}, [el("span", {class:"badge badge-neutral", text:s.status})]),
+      el("td", {class:"mono", text:s.submission_id}), el("td", {}, [actions])]));
+  }
+}
+document.getElementById("submit-btn").addEventListener("click", async () => {
+  const notice = document.getElementById("submit-notice");
+  const fileId = document.getElementById("file-select").value;
+  if (!fileId) { showNotice(notice, "error", "No generated file selected."); return; }
+  if (!confirm("This will attempt to submit to Companies House (test mode unless configured otherwise). Continue?")) return;
+  const btn = document.getElementById("submit-btn"); btn.disabled = true; btn.textContent = "Submitting...";
+  try {
+    const data = await apiCall(`/api/companies/${companyId}/filing/submit`, {method:"POST", body: JSON.stringify({
+      file_id: Number(fileId), confirm_approval: document.getElementById("confirm-approval").checked,
+    })});
+    showNotice(notice, "ok", `Status: ${data.status} (${data.test_mode ? "test mode" : "live"}). Submission ${data.submission_id}.`);
+    await loadSubmissions();
+  } catch (err) { showErrors(notice, err); }
+  finally { btn.disabled = false; btn.textContent = "Submit"; }
+});
+(async () => { await loadFiles(); await loadSubmissions(); })();
+</script>
+</body>
+</html>

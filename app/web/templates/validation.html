@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Validation - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a><a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup">Setup</a><a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a><a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation" aria-current="page">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main class="wide">
+  <h1>Validate with Arelle</h1>
+  <div class="panel">
+    <div class="field"><label for="file-select">Generated file</label><select id="file-select"></select></div>
+    <div id="validate-notice"></div>
+    <button id="validate-btn">Validate</button>
+  </div>
+  <div class="panel" id="result-panel" style="display:none">
+    <h2>Result</h2>
+    <p id="result-summary"></p>
+    <div id="result-errors"></div>
+    <div id="result-warnings"></div>
+    <details><summary>Full log</summary><pre class="log" id="result-log"></pre></details>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+async function loadFiles() {
+  const data = await apiCall(`/api/companies/${companyId}/files`);
+  const select = document.getElementById("file-select");
+  select.innerHTML = "";
+  for (const f of data.files) select.appendChild(el("option", {value:f.id, text:`${f.created_at} - ${f.account_type}${f.reconciliation_ok ? "" : " (does not match ledger)"}`}));
+}
+function list(container, items, cls) {
+  container.innerHTML = "";
+  if (!items.length) return;
+  container.appendChild(el("ul", {class: cls}, items.map((line) => el("li", {text: line}))));
+}
+document.getElementById("validate-btn").addEventListener("click", async () => {
+  const notice = document.getElementById("validate-notice");
+  const fileId = document.getElementById("file-select").value;
+  if (!fileId) { showNotice(notice, "error", "Generate a file on the UK Accounts page first."); return; }
+  notice.innerHTML = "";
+  const btn = document.getElementById("validate-btn"); btn.disabled = true; btn.textContent = "Validating...";
+  try {
+    const data = await apiCall(`/api/companies/${companyId}/validate`, {method:"POST", body: JSON.stringify({file_id: Number(fileId)})});
+    const panel = document.getElementById("result-panel"); panel.style.display = "block";
+    const summary = document.getElementById("result-summary");
+    summary.textContent = data.result.valid ? "Valid." : "Not valid.";
+    summary.style.color = data.result.valid ? "var(--green)" : "var(--red)";
+    list(document.getElementById("result-errors"), data.result.errors, "notice notice-error");
+    list(document.getElementById("result-warnings"), data.result.warnings, "notice notice-warn");
+    document.getElementById("result-log").textContent = data.result.log || "(no log produced)";
+  } catch (err) { showErrors(notice, err); }
+  finally { btn.disabled = false; btn.textContent = "Validate"; }
+});
+loadFiles();
+</script>
+</body>
+</html>

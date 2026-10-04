@@ -1,0 +1,137 @@
+/* UK Accounts - shared styles.
+   Palette: a ledger, not a SaaS dashboard - paper white, ink navy, a single
+   amber accent used only for pending/attention states. No card-soup, no
+   rounded-everything: rules and numbers carry the structure. */
+:root {
+  --paper: #FBFAF7;
+  --panel: #FFFFFF;
+  --ink: #1C2530;
+  --ink-soft: #4B5A6B;
+  --line: #D8DCE1;
+  --line-strong: #1C2530;
+  --navy: #24405C;
+  --navy-dark: #16283B;
+  --amber: #B4772A;
+  --amber-bg: #FBF1E4;
+  --green: #2E6E4E;
+  --green-bg: #EAF3EE;
+  --red: #A23B33;
+  --red-bg: #FBEBE9;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+a { color: var(--navy); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--navy); outline-offset: 2px;
+}
+
+.topbar {
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--panel);
+  padding: 14px 24px;
+  display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap;
+}
+.topbar .brand { font-family: var(--serif); font-size: 19px; font-weight: 600; color: var(--ink); text-decoration: none; }
+.topbar nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.topbar nav a { color: var(--ink-soft); text-decoration: none; font-size: 14px; padding: 2px 0; border-bottom: 2px solid transparent; }
+.topbar nav a:hover, .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--navy); }
+
+main { max-width: 980px; margin: 0 auto; padding: 32px 24px 64px; }
+main.wide { max-width: 1180px; }
+
+h1 { font-family: var(--serif); font-size: 30px; margin: 0 0 4px; }
+h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 12px; }
+.subtitle { color: var(--ink-soft); margin: 0 0 28px; max-width: 60ch; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.panel + .panel { margin-top: 0; }
+.panel-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 5px; }
+.field .hint { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+input, select, textarea {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 2px;
+  font-family: var(--sans); font-size: 14px; background: var(--paper); color: var(--ink);
+}
+textarea { resize: vertical; min-height: 70px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.row > .field { flex: 1 1 160px; }
+.checkbox-field { display: flex; align-items: flex-start; gap: 8px; }
+.checkbox-field input { width: auto; margin-top: 3px; }
+.checkbox-field label { font-size: 13.5px; color: var(--ink); }
+
+button {
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  padding: 9px 16px; border-radius: 2px; border: 1px solid var(--navy);
+  background: var(--navy); color: #fff; cursor: pointer;
+}
+button:hover { background: var(--navy-dark); }
+button.secondary { background: transparent; color: var(--navy); }
+button.secondary:hover { background: #EEF2F6; }
+button.danger { background: var(--red); border-color: var(--red); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--ink-soft); font-size: 12.5px; border-bottom: 1px solid var(--line-strong); }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 700; border-top: 2px solid var(--line-strong); border-bottom: none; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 12px; font-weight: 600; }
+.badge-ok { background: var(--green-bg); color: var(--green); }
+.badge-warn { background: var(--amber-bg); color: var(--amber); }
+.badge-error { background: var(--red-bg); color: var(--red); }
+.badge-neutral { background: #EEF1F4; color: var(--ink-soft); }
+
+.notice { padding: 10px 14px; border-radius: 2px; font-size: 13.5px; margin-bottom: 14px; border: 1px solid transparent; }
+.notice-ok { background: var(--green-bg); color: var(--green); border-color: #BEDBCB; }
+.notice-warn { background: var(--amber-bg); color: var(--amber); border-color: #E7CFA6; }
+.notice-error { background: var(--red-bg); color: var(--red); border-color: #E5B9B4; }
+.notice ul { margin: 6px 0 0; padding-left: 18px; }
+
+.empty { color: var(--ink-soft); font-size: 13.5px; padding: 10px 0; }
+.muted { color: var(--ink-soft); }
+.step-list { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+.step-list li { counter-increment: step; padding: 6px 0 6px 30px; position: relative; }
+.step-list li::before {
+  content: counter(step); position: absolute; left: 0; top: 6px;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+  border: 1px solid var(--line); width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.journal-line { display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr auto; gap: 8px; align-items: center; margin-bottom: 6px; }
+@media (max-width: 720px) {
+  .journal-line { grid-template-columns: 1fr 1fr; }
+  .topbar { padding: 12px 16px; }
+  main { padding: 24px 16px 48px; }
+}
+.remove-line { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: 7px 10px; }
+.remove-line:hover { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+
+code, .mono { font-family: var(--mono); font-size: 12.5px; }
+pre.log { background: var(--navy-dark); color: #E4E9EF; padding: 14px; border-radius: 2px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12.5px; max-height: 360px; }

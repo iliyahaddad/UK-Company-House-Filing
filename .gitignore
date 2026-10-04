@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+*.db
+*.db-journal
+*.log
+.env
+.venv/
+venv/
+sample_data/*/
+!sample_data/README.md

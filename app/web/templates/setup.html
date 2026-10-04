@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Setup - {{ company.name }}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">UK Accounts</a>
+  <nav>
+    <a href="/companies">Companies</a>
+    <a href="/companies/{{ company.id }}">{{ company.name }}</a>
+    <a href="/companies/{{ company.id }}/setup" aria-current="page">Setup</a>
+    <a href="/companies/{{ company.id }}/journal">Journal</a>
+    <a href="/companies/{{ company.id }}/reports">Reports</a>
+    <a href="/companies/{{ company.id }}/uk-accounts">UK Accounts</a>
+    <a href="/companies/{{ company.id }}/validation">Validation</a>
+    <a href="/companies/{{ company.id }}/filing">Filing</a>
+  </nav>
+</header>
+<main>
+  <h1>Setup</h1>
+  <p class="subtitle">Chart of accounts, fiscal periods, and the facts the directors must confirm for each period.</p>
+
+  <div class="panel">
+    <div class="panel-title-row"><h2>Chart of accounts</h2>
+      <button class="secondary" id="seed-btn" type="button">Add standard chart</button>
+    </div>
+    <div id="accounts-notice"></div>
+    <table id="accounts-table"><tr><th>Code</th><th>Name</th><th>Type</th><th>Category</th></tr></table>
+    <h2 style="margin-top:22px">Add an account</h2>
+    <form id="account-form">
+      <div class="row">
+        <div class="field"><label for="acc-code">Code</label><input id="acc-code" required></div>
+        <div class="field"><label for="acc-name">Name</label><input id="acc-name" required></div>
+        <div class="field"><label for="acc-type">Type</label>
+          <select id="acc-type">{% for t in types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+            <option value="Asset">Asset</option><option value="Liability">Liability</option>
+            <option value="Equity">Equity</option><option value="Revenue">Revenue</option><option value="Expense">Expense</option></select>
+        </div>
+        <div class="field"><label for="acc-category">Category</label>
+          <select id="acc-category"><option value="">Default for type</option>
+            {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select>
+        </div>
+      </div>
+      <button type="submit">Add account</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Fiscal periods</h2>
+    <div id="period-notice"></div>
+    <table id="periods-table"><tr><th>Name</th><th>Start</th><th>End</th><th>Current</th></tr></table>
+    <h2 style="margin-top:22px">Add a period</h2>
+    <form id="period-form">
+      <div class="row">
+        <div class="field"><label for="p-name">Name</label><input id="p-name" placeholder="Year ended 31 Dec 2024" required></div>
+        <div class="field"><label for="p-start">Start date</label><input id="p-start" type="date" required></div>
+        <div class="field"><label for="p-end">End date</label><input id="p-end" type="date" required></div>
+      </div>
+      <button type="submit">Add period</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title-row"><h2>Accounts details for a period</h2>
+      <select id="details-period"></select>
+    </div>
+    <p class="subtitle" style="margin-bottom:14px">Required before accounts can be generated. Directors: {{ company.directors or "set these on the company page first" }}.</p>
+    <div id="details-notice"></div>
+    <form id="details-form">
+      <div class="row">
+        <div class="field"><label for="approval-date">Date directors approved the accounts</label><input id="approval-date" type="date" required></div>
+        <div class="field"><label for="signing-director">Signing director</label><select id="signing-director"></select></div>
+        <div class="field"><label for="employees">Average number of employees</label><input id="employees" type="number" min="0" required></div>
+      </div>
+      <div class="field"><label for="activities">Principal activities</label><textarea id="activities" required placeholder="Computer programming activities"></textarea></div>
+      <div class="checkbox-field"><input type="checkbox" id="confirm-eligibility"><label for="confirm-eligibility">The company is eligible for this type of accounts (size limits, no exclusions)</label></div>
+      <div class="checkbox-field"><input type="checkbox" id="confirm-audit"><label for="confirm-audit">The company is entitled to audit exemption</label></div>
+      <button type="submit">Save details</button>
+    </form>
+  </div>
+</main>
+<script src="/static/safe.js"></script>
+<script>
+const companyId = {{ company.id }};
+let periods = [];
+
+function renderAccounts(accounts) {
+  const table = document.getElementById("accounts-table");
+  table.innerHTML = "<tr><th>Code</th><th>Name</th><th>Type</th><th>Category</th></tr>";
+  if (!accounts.length) { table.appendChild(el("tr", {}, [el("td", {colspan:"4", class:"empty"}, ["No accounts yet."])])); return; }
+  for (const a of accounts) {
+    table.appendChild(el("tr", {}, [
+      el("td", {class:"mono", text:a.code}), el("td", {text:a.name}), el("td", {text:a.type}),
+      el("td", {class:"muted", text:a.effective_category}),
+    ]));
+  }
+}
+async function loadAccounts() {
+  const data = await apiCall(`/api/companies/${companyId}/accounts`);
+  renderAccounts(data.accounts);
+}
+document.getElementById("seed-btn").addEventListener("click", async () => {
+  try { await apiCall(`/api/companies/${companyId}/accounts/seed-chart`, {method:"POST"}); await loadAccounts(); }
+  catch (err) { showErrors(document.getElementById("accounts-notice"), err); }
+});
+document.getElementById("account-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await apiCall(`/api/companies/${companyId}/accounts`, {method:"POST", body: JSON.stringify({
+      code: document.getElementById("acc-code").value, name: document.getElementById("acc-name").value,
+      type: document.getElementById("acc-type").value, category: document.getElementById("acc-category").value || null,
+    })});
+    document.getElementById("account-form").reset();
+    await loadAccounts();
+  } catch (err) { showErrors(document.getElementById("accounts-notice"), err); }
+});
+
+function renderPeriods() {
+  const table = document.getElementById("periods-table");
+  table.innerHTML = "<tr><th>Name</th><th>Start</th><th>End</th><th>Current</th></tr>";
+  const sel = document.getElementById("details-period"); sel.innerHTML = "";
+  if (!periods.length) { table.appendChild(el("tr", {}, [el("td", {colspan:"4", class:"empty"}, ["No periods yet."])])); return; }
+  for (const p of periods) {
+    table.appendChild(el("tr", {}, [el("td", {text:p.name}), el("td", {text:p.start_date}), el("td", {text:p.end_date}),
+      el("td", {text: p.is_current ? "Yes" : ""})]));
+    sel.appendChild(el("option", {value:p.id, text:`${p.name} (${p.end_date})`}));
+  }
+  loadDetails();
+}
+async function loadPeriods() {
+  const data = await apiCall(`/api/companies/${companyId}/periods`);
+  periods = data.periods; renderPeriods();
+}
+document.getElementById("period-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await apiCall(`/api/companies/${companyId}/periods`, {method:"POST", body: JSON.stringify({
+      name: document.getElementById("p-name").value, start_date: document.getElementById("p-start").value,
+      end_date: document.getElementById("p-end").value, is_current: true,
+    })});
+    document.getElementById("period-form").reset();
+    await loadPeriods();
+  } catch (err) { showErrors(document.getElementById("period-notice"), err); }
+});
+
+document.getElementById("details-period").addEventListener("change", loadDetails);
+async function loadDetails() {
+  const sel = document.getElementById("details-period");
+  if (!sel.value) return;
+  const data = await apiCall(`/api/companies/${companyId}/details?period_id=${sel.value}`);
+  const dirSel = document.getElementById("signing-director"); dirSel.innerHTML = "";
+  for (const d of data.directors) dirSel.appendChild(el("option", {value:d, text:d}));
+  const d = data.details;
+  document.getElementById("approval-date").value = d ? (d.approval_date || "") : "";
+  if (d && d.signing_director) dirSel.value = d.signing_director;
+  document.getElementById("employees").value = d ? (d.average_employees ?? "") : "";
+  document.getElementById("activities").value = d ? (d.principal_activities || "") : "";
+  document.getElementById("confirm-eligibility").checked = !!(d && d.confirm_eligibility);
+  document.getElementById("confirm-audit").checked = !!(d && d.confirm_audit_exemption);
+}
+document.getElementById("details-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const notice = document.getElementById("details-notice");
+  try {
+    await apiCall(`/api/companies/${companyId}/details`, {method:"PUT", body: JSON.stringify({
+      period_id: Number(document.getElementById("details-period").value),
+      approval_date: document.getElementById("approval-date").value,
+      signing_director: document.getElementById("signing-director").value,
+      average_employees: Number(document.getElementById("employees").value),
+      principal_activities: document.getElementById("activities").value,
+      confirm_eligibility: document.getElementById("confirm-eligibility").checked,
+      confirm_audit_exemption: document.getElementById("confirm-audit").checked,
+    })});
+    showNotice(notice, "ok", "Saved.");
+  } catch (err) { showErrors(notice, err); }
+});
+
+loadAccounts(); loadPeriods();
+</script>
+</body>
+</html>

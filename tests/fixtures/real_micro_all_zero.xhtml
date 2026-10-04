@@ -1,0 +1,328 @@
+<?xml version='1.0' encoding='ASCII'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ix="http://www.xbrl.org/2013/inlineXBRL" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:ixt2="http://www.xbrl.org/inlineXBRL/transformation/2011-07-31" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:uk-accrep="http://xbrl.frc.org.uk/reports/2025-01-01/accrep" xmlns:uk-aurep="http://xbrl.frc.org.uk/reports/2025-01-01/aurep" xmlns:uk-bus="http://xbrl.frc.org.uk/cd/2025-01-01/business" xmlns:uk-core="http://xbrl.frc.org.uk/fr/2025-01-01/core" xmlns:uk-direp="http://xbrl.frc.org.uk/reports/2025-01-01/direp" xmlns:uk-geo="http://xbrl.frc.org.uk/cd/2025-01-01/countries"><head><title>Micro-Entity Accounts</title><style type="text/css">
+.page {
+    page-break-after: always; 
+}
+
+body {
+    font-family: Helvetica, Georgia, sans-serif;
+    font-size: medium; 
+}
+
+@media screen, projection, tv {
+
+    body {
+	margin: 2% 4% 2% 4%;
+	background-color: gray; 
+    }
+    div.page {
+
+	background-color: white;
+	padding: 2em;
+	/* CSS hack for cross browser minimum height */ min-height: 29.7cm;
+	height: 29.7cm;
+	width: 21cm;
+	margin: 2em 0; 
+    }
+
+}
+
+.titlepage .company-number {
+    text-align: right;
+    font-size: small;
+    font-weight: bold; 
+}
+
+.titlepage img {
+    margin: auto;
+    width: 25%;
+    display: block;
+    padding-top: 12em;
+    padding-left: 0em;
+    padding-bottom: 1em;
+    padding-right: 0em; 
+}
+
+.titlepage .company-name {
+    text-align: center;
+    font-size: xx-large;
+    font-weight: bold;
+    padding-top: 1em;
+    padding-left: 0em;
+    padding-bottom: 1em;
+    padding-right: 0em; 
+}
+
+.titlepage .title {
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    padding: 0.5rem; 
+}
+
+.titlepage .subtitle {
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    padding: 0.5rem; 
+}
+
+.page .header {
+    text-align: center;
+    font-weight: bold; 
+}
+
+.page .header div:last-child {
+    padding-bottom: 0.5rem; 
+}
+
+.page .header hr {
+    margin-bottom: 2rem; 
+}
+
+.sheet {
+    width: 80%;
+    border-collapse: separate; 
+}
+
+.sheet td {
+    padding-top: 0em;
+    padding-left: 1.2em;
+    padding-bottom: 0em;
+    padding-right: 1.2em; 
+}
+
+.spacetable {
+    table-layout: fixed;
+    border-collapse: separate; 
+}
+
+.spacetable td {
+    padding-top: 0em;
+    padding-left: 1.2em;
+    padding-bottom: 0em;
+    padding-right: 1.2em; 
+}
+
+table {
+    border-spacing: 1rem 1rem;
+    border-collapse: separate; 
+}
+
+.table {
+    border-spacing: 0.2rem 0rem;
+    border-collapse: separate;
+    font-size: medium;
+    margin-left: auto;
+    margin-right: auto; 
+}
+
+.company-info {
+    border-collapse: separate;
+    border-spacing: 0em;
+    display: table;
+    table-layout: fixed; 
+}
+
+.company-info tr td {
+    vertical-align: top;
+    padding: 0.5em; 
+}
+
+.company-info tr td.tag {
+    width: 15em;
+    font-weight: bold; 
+}
+
+.row {
+    display: table-row; 
+}
+
+.cell {
+    display: table-cell; 
+}
+
+.label {
+    width: 50%;
+    padding-right: 1em;
+    font-size: smaller;
+
+}
+
+.label.heading {
+    font-weight: bold;
+    margin-top: 1rem; 
+}
+
+.note {
+    font-size: smaller;
+    text-align: center;
+    padding-left: 0.2em;
+    padding-right: 0.2em; 
+}
+
+.note.header {
+    font-size: smaller;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 1em;
+    padding-right: 1em; 
+}
+
+.label.breakdown.heading {
+    margin-bottom: 0.2rem; 
+}
+
+.value {
+    font-family: Source Code Pro, monospace, Courier New;
+    width: 20%;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-right: 1em;
+    font-size: small; 
+}
+
+@media print {
+
+    .label {
+	font-size: small;
+	width: 40%;
+    }
+
+    .value {
+	font-family: Source Code Pro, monospace;
+	width: 20%; font-size: small;
+	
+    }
+
+    .company-info {
+	font-size: medium;
+	
+    }
+
+    table.sheet {
+	margin-left: 8%;
+	
+    }
+
+    table.spacetable {
+	margin-left: 8%;
+	
+    }
+
+    body {
+	font-size: 11pt;
+	
+    }
+
+    .data {
+	width: 8em;
+	
+    }
+
+}
+
+.total.value {
+    margin-top: 1em; 
+}
+
+.breakdown.total {
+    margin-top: 0.2em;
+    padding-top: 4px;
+    border-top: 1px solid white; 
+}
+
+.breakdown.total.value {
+    border-top: 1px solid #808080; 
+}
+
+.breakdown.total.super-total.value {
+    border-top: 5px double #808080; 
+}
+
+.column.header {
+    padding: 0.5em 1em 0.5em 1em;
+    border-bottom: 0.2em solid black;
+    font-weight: bold;
+    text-align: center;
+    width: 20%;
+    margin-right: 1rem; 
+}
+
+.currency {
+    text-align: right;
+    padding-left: 1em;
+    padding-right: 1em;
+    width: 20%;
+    margin-right: 1rem;
+    margin-top: 0.25em; 
+}
+
+.data.value {
+    text-align: right; 
+}
+
+.data.value.negative {
+    color: #400000; 
+}
+
+.data.value.nil {
+    color: #a0a0a0; 
+}
+
+.hidden {
+    display: none; 
+}
+
+.fact {
+    display: flex; flex-direction: row;
+    margin: 2px; 
+}
+
+.fact div {
+    margin: 0rem 0rem 0rem 1rem;
+    padding: 4px; 
+}
+
+.fact .ref {
+    width: 5em;
+    text-align: center;
+    color: white;
+    background-color: #2ca469;
+    border: 2px solid #104020;
+    font-weight: bold;
+    font-size: small;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem; 
+}
+
+.fact .description {
+    width: 22em;
+    font-size: small; 
+}
+
+.fact .factvalue {
+    border: 2px solid black;
+    background-color: white;
+    font-family: Source Code Pro, monospace;
+    font-size: small;
+    width: 12rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-right: 1rem; 
+}
+
+.fact .factvalue.false {
+    color: #a0a0a0; 
+}
+
+.rank-1 {
+    position: relative;
+    left: -6rem; 
+}
+
+.rank1 {
+    position: relative;
+    left: 4rem; 
+}
+</style></head><body><div class="hidden"><ix:header><ix:hidden><ix:nonNumeric name="uk-bus:ReportTitle" contextRef="ctxt-0">Micro-Entity Accounts</ix:nonNumeric><ix:nonNumeric name="uk-bus:BusinessReportPublicationDate" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-core:DateAuthorisationFinancialStatementsForIssue" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-bus:StartDateForPeriodCoveredByReport" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">01&#160;January&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-bus:EndDateForPeriodCoveredByReport" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-bus:EntityCurrentLegalOrRegisteredName" contextRef="ctxt-0">Demo Ltd</ix:nonNumeric><ix:nonNumeric name="uk-bus:UKCompaniesHouseRegisteredNumber" contextRef="ctxt-0">12345678</ix:nonNumeric><ix:nonNumeric name="uk-bus:NameProductionSoftware" contextRef="ctxt-0">ukaccounts</ix:nonNumeric><ix:nonNumeric name="uk-bus:BalanceSheetDate" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-bus:SICCodeRecordedUKCompaniesHouse1" contextRef="ctxt-0">62020</ix:nonNumeric><ix:nonNumeric name="uk-bus:MainIndustrySector" contextRef="ctxt-2"></ix:nonNumeric><ix:nonNumeric name="uk-bus:EntityDormantTruefalse" contextRef="ctxt-0">false</ix:nonNumeric><ix:nonNumeric name="uk-bus:EntityTradingStatus" contextRef="ctxt-0"></ix:nonNumeric><ix:nonNumeric name="uk-bus:AccountingStandardsApplied" contextRef="ctxt-3"></ix:nonNumeric><ix:nonNumeric name="uk-bus:AccountsType" contextRef="ctxt-4"></ix:nonNumeric><ix:nonNumeric name="uk-bus:AccountsStatusAuditedOrUnaudited" contextRef="ctxt-5"></ix:nonNumeric><ix:nonNumeric name="uk-bus:LegalFormEntity" contextRef="ctxt-6"></ix:nonNumeric><ix:nonNumeric name="uk-bus:CountryFormationOrIncorporation" contextRef="ctxt-7"></ix:nonNumeric><ix:nonNumeric name="uk-bus:DateFormationOrIncorporation" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">01&#160;January&#160;2024</ix:nonNumeric><ix:nonNumeric name="uk-core:DirectorSigningFinancialStatements" contextRef="ctxt-8"></ix:nonNumeric><ix:nonNumeric name="uk-bus:NameContactDepartmentOrPerson" contextRef="ctxt-9">Corporate Enquiries</ix:nonNumeric><ix:nonNumeric name="uk-bus:E-mailAddress" contextRef="ctxt-9">corporate@example.com</ix:nonNumeric></ix:hidden><ix:references><link:schemaRef xlink:type="simple" xlink:href="https://xbrl.frc.org.uk/FRS-102/2025-01-01/FRS-102-2025-01-01.xsd"></link:schemaRef></ix:references><ix:resources><xbrli:context id="ctxt-0"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-1"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:instant>2024-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-2"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:MainIndustrySectorDimension">uk-bus:M-ProfessionalScientificTechnicalActivities</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-3"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:AccountingStandardsDimension">uk-bus:Micro-entities</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-4"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:AccountsTypeDimension">uk-bus:AbridgedAccounts</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-5"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:AccountsStatusDimension">uk-bus:AuditExempt-NoAccountantsReport</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-6"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:LegalFormEntityDimension">uk-bus:PrivateLimitedCompanyLtd</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-7"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-geo:CountriesRegionsDimension">uk-geo:EnglandWales</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-8"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director1</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-9"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-geo:CountriesRegionsDimension">uk-geo:UnitedKingdom</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:context id="ctxt-10"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:instant>2024-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-11"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:instant>2023-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-12"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-core:MaturitiesOrExpirationPeriodsDimension">uk-core:WithinOneYear</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2024-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-13"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-core:MaturitiesOrExpirationPeriodsDimension">uk-core:WithinOneYear</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2023-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-14"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-core:MaturitiesOrExpirationPeriodsDimension">uk-core:AfterOneYear</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2024-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-15"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="uk-core:MaturitiesOrExpirationPeriodsDimension">uk-core:AfterOneYear</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2023-12-31</xbrli:instant></xbrli:period></xbrli:context><xbrli:context id="ctxt-16"><xbrli:entity><xbrli:identifier scheme="http://www.companieshouse.gov.uk/">12345678</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context><xbrli:unit id="GBP"><xbrli:measure>iso4217:GBP</xbrli:measure></xbrli:unit><xbrli:unit id="pure"><xbrli:measure>xbrli:pure</xbrli:measure></xbrli:unit></ix:resources></ix:header></div><div id="report" class="report"><div class="page" id="elt-10343b10-dcc0-4ac8-a21f-cfa8039fdbb4-element"><div class="titlepage"><div class="company-number"><span><span> Company registration no. </span><span><ix:nonNumeric name="uk-bus:UKCompaniesHouseRegisteredNumber" contextRef="ctxt-0">12345678</ix:nonNumeric></span><span> (</span><span><span>England and Wales</span></span><span>)</span></span></div><img alt="Company logo" src=""/><div class="company-name"><span><span><ix:nonNumeric name="uk-bus:EntityCurrentLegalOrRegisteredName" contextRef="ctxt-0">Demo Ltd</ix:nonNumeric></span></span></div><div class="title"><span><span><ix:nonNumeric name="uk-bus:ReportTitle" contextRef="ctxt-0">Micro-Entity Accounts</ix:nonNumeric></span></span></div><div class="subtitle"><span><span>For the year ended </span><span><ix:nonNumeric name="uk-bus:EndDateForPeriodCoveredByReport" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric></span></span></div></div></div><div class="page" id="elt-54f3f904-0a2a-4a1a-a3b9-04b864153e63-element"><div><div class="header"><div><span><span><ix:nonNumeric name="uk-bus:EntityCurrentLegalOrRegisteredName" contextRef="ctxt-0">Demo Ltd</ix:nonNumeric></span></span></div><div><span>Company information</span></div><div><span><span>For the year ended </span><span><ix:nonNumeric name="uk-bus:EndDateForPeriodCoveredByReport" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric></span></span></div><hr/></div><table class="company-info"><tr><td class="tag"><span>Directors</span></td><td/></tr><tr><td class="tag"><span>Company number</span></td><td><span><span> </span><span><ix:nonNumeric name="uk-bus:UKCompaniesHouseRegisteredNumber" contextRef="ctxt-0">12345678</ix:nonNumeric></span><span>, registered in </span><span><span>England and Wales</span></span></span></td></tr><tr><td class="tag"><span>Registered office</span></td><td><span><span></span><span> </span><span></span></span></td></tr></table></div></div><div class="page" id="elt-5b89a09d-56e9-4caa-bb74-f4ae242f20e7-element"><div><div class="header"><div><span><span><ix:nonNumeric name="uk-bus:EntityCurrentLegalOrRegisteredName" contextRef="ctxt-0">Demo Ltd</ix:nonNumeric></span></span></div><div><span>Statement of financial position</span></div><div><span><span>As at </span><span><ix:nonNumeric name="uk-bus:BalanceSheetDate" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric></span></span></div><hr/></div><div class="worksheet"><table class="sheet table" id="elt-e8ca3577-2a7b-401e-99aa-238752966a42-element"><tr class="row"><td class="label cell">&#160;</td><td class="column header cell" colspan="1">2024</td><td class="column header cell" colspan="1">2023</td></tr><tr class="row"><td class="label cell">&#160;</td><td class="column currency cell" colspan="1">&#163;</td><td class="column currency cell" colspan="1">&#163;</td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Fixed Assets</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:FixedAssets" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:FixedAssets" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Current Assets</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:CurrentAssets" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:CurrentAssets" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Prepayments and Accrued Income</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:PrepaymentsAccruedIncomeNotExpressedWithinCurrentAssetSubtotal" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:PrepaymentsAccruedIncomeNotExpressedWithinCurrentAssetSubtotal" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Creditors: falling due within one year</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Creditors" contextRef="ctxt-12" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Creditors" contextRef="ctxt-13" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Net Current Assets</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:NetCurrentAssetsLiabilities" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:NetCurrentAssetsLiabilities" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Total Assets Less Liabilities</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:TotalAssetsLessCurrentLiabilities" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:TotalAssetsLessCurrentLiabilities" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Creditors: falling due after one year</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Creditors" contextRef="ctxt-14" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Creditors" contextRef="ctxt-15" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Provisions For Liabilities</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:ProvisionsForLiabilitiesBalanceSheetSubtotal" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:ProvisionsForLiabilitiesBalanceSheetSubtotal" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Accrued liabilities and deferred income</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:AccruedLiabilitiesDeferredIncome" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:AccruedLiabilitiesDeferredIncome" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Net Assets</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:NetAssetsLiabilities" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:NetAssetsLiabilities" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr><tr class="row"><td class="label cell">&#160;</td></tr><tr class="row"><td class="label heading total cell"><span>Capital and Reserves</span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Equity" contextRef="ctxt-10" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td><td class="data value total nil cell"><span><span></span><ix:nonFraction name="uk-core:Equity" contextRef="ctxt-11" format="ixt2:numdotdecimal" unitRef="GBP" decimals="0" scale="0">0</ix:nonFraction><span>&#160;&#160;</span></span></td></tr></table></div><div><div><p><span><ix:nonNumeric name="uk-direp:StatementThatAccountsHaveBeenPreparedInAccordanceWithProvisionsSmallCompaniesRegime" contextRef="ctxt-16"><span>These financial statements have been prepared in accordance with the micro-entity provisions and delivered in accordance with the provisions applicable under the small companies regime.</span></ix:nonNumeric></span></p><p><span><ix:nonNumeric name="uk-direp:StatementThatCompanyEntitledToExemptionFromAuditUnderSection477CompaniesAct2006RelatingToSmallCompanies" contextRef="ctxt-16"><span>For the accounting period ending </span><span><ix:nonNumeric name="uk-bus:EndDateForPeriodCoveredByReport" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric></span><span> the company was entitled to exemption from audit under section 477 of the Companies Act 2006 relating to small companies.</span></ix:nonNumeric></span></p><p><span><ix:nonNumeric name="uk-direp:StatementThatMembersHaveNotRequiredCompanyToObtainAnAudit" contextRef="ctxt-16"><span>The members have not required the company to obtain an audit of its financial statements for the accounting period in accordance with section 476.</span></ix:nonNumeric></span></p><p><span><ix:nonNumeric name="uk-direp:StatementThatDirectorsAcknowledgeTheirResponsibilitiesUnderCompaniesAct" contextRef="ctxt-16"><span>The directors acknowledge their responsibilities for complying with the requirements of the Act with respect to accounting records and the preparation of financial statements.</span></ix:nonNumeric></span></p></div></div><div><div><p><span><span>Approved by the board of directors and authorised for publication on </span><span><ix:nonNumeric name="uk-core:DateAuthorisationFinancialStatementsForIssue" contextRef="ctxt-1" format="ixt2:datedaymonthyearen">31&#160;December&#160;2024</ix:nonNumeric></span><span>.</span></span></p><p><span><span>Signed on behalf of the board, by </span><span><span>Director</span></span><span>.</span></span></p><img alt="Director's signature" src=""/></div></div></div></div></div></body></html>
