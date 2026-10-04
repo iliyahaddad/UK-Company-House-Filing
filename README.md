@@ -1,4 +1,4 @@
-# UK Accounts - Companies House Filing (v4)
+# UK Accounts - Companies House Filing
 
 Double-entry ledger, UK statutory micro/small/dormant accounts as iXBRL, Arelle
 validation, and Companies House Software Filing submission, in one FastAPI app.
@@ -92,7 +92,9 @@ suite because they require the operator's real environment and credentials:
 
 ## License
 
-Add a `LICENSE` file appropriate for your use (the original repository's
-CC BY-NC-ND is unusual for software - a permissive or copyleft software
-license is probably what you want instead; that is a decision for you, not
-something to copy without reading).
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) license.
+Commercial use is not permitted.
+Redistribution is permitted with attribution.
+Modified or derivative versions may not be distributed.
+You may not sell, sublicense, or use this project for commercial purposes.
+See the full license text in the LICENSE file.
